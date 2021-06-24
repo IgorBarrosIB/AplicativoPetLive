@@ -25,7 +25,8 @@ import java.net.MalformedURLException;
 public class MainActivity extends AppCompatActivity {
 
     private Button botaoRecuperar,buttonPorcaoUnica;
-    private JSONArray json;
+    private JSONArray jsonArray;
+    private JSONObject jsonObject;
     private TextView textoResultado;
 
     @Override
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MyTask taskTeste = new MyTask();
+        TaskArray taskTeste = new TaskArray();
         String url = "http://192.168.15.5:3000/horario/all";
         taskTeste.execute(url);
 
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         botaoRecuperar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyTask task = new MyTask();
+                TaskObject task = new TaskObject();
                 String url = "http://192.168.15.5:3000/horario/all";
                 task.execute(url);
 
@@ -56,13 +57,14 @@ public class MainActivity extends AppCompatActivity {
         buttonPorcaoUnica.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyTask task = new MyTask();
+                TaskObject task = new TaskObject();
                 String url = "http://192.168.15.5:3000/porcaoUnica/1";
                 task.execute(url);
             }
         });
     }
-    class MyTask extends AsyncTask<String, Void, String> {
+
+    class TaskObject extends AsyncTask<String, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -109,12 +111,66 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String resultado) {
             super.onPostExecute(resultado);
             try {
-                json = new JSONArray(resultado);
-                textoResultado.setText( json.getJSONObject(0).getString("hora") );
+                jsonObject = new JSONObject(resultado);
+                textoResultado.setText( jsonObject.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    class TaskArray extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            String stringUrl = strings[0];
+            InputStream inputStream = null;
+            InputStreamReader inputStreamReader = null;
+            StringBuffer buffer = null;
+
+            try {
+
+                URL url = new URL(stringUrl);
+                HttpURLConnection conexao = (HttpURLConnection) url.openConnection();
+
+                // Recupera os dados em Bytes
+                inputStream = conexao.getInputStream();
+
+                //inputStreamReader lê os dados em Bytes e decodifica para caracteres
+                inputStreamReader = new InputStreamReader( inputStream );
+
+                //Objeto utilizado para leitura dos caracteres do InpuStreamReader
+                BufferedReader reader = new BufferedReader( inputStreamReader );
+                buffer = new StringBuffer();
+                String linha = "";
+
+                while((linha = reader.readLine()) != null){
+                    buffer.append( linha );
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return buffer.toString();//buffer.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String resultado) {
+            super.onPostExecute(resultado);
+            try {
+                jsonArray = new JSONArray(resultado);
+                textoResultado.setText( jsonArray.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
