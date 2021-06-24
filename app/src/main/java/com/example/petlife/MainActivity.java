@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         MyTask taskTeste = new MyTask();
-        String url = "http://192.168.1.26:3000/horario/all";
+        String url = "http://192.168.15.5:3000/horario/all";
         taskTeste.execute(url);
 
         botaoRecuperar = findViewById(R.id.buttonRecuperar);
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 MyTask task = new MyTask();
-                String url = "http://192.168.1.26:3000/horario/2";
+                String url = "http://192.168.15.5:3000/horario/all";
                 task.execute(url);
 
             }
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(resultado);
             try {
                 json = new JSONArray(resultado);
-                //textoResultado.setText( json.getJSONObject(0).getString("hora") );
+                textoResultado.setText( json.getJSONObject(0).getString("hora") );
             } catch (JSONException e) {
                 e.printStackTrace();
             }
