@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,11 +30,14 @@ public class MainActivity extends AppCompatActivity {
     private JSONArray jsonArray;
     private JSONObject jsonObject;
     private TextView textoResultado;
+    private RecyclerView recyclerView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
 
         TaskArray taskTeste = new TaskArray();
         String url = "http://192.168.15.5:3000/horario/all";
@@ -49,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 TaskObject task = new TaskObject();
                 String url = "http://192.168.15.5:3000/horario/all";
                 task.execute(url);
-
             }
         });
 
@@ -167,7 +171,17 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(resultado);
             try {
                 jsonArray = new JSONArray(resultado);
-                textoResultado.setText( jsonArray.toString());
+                //textoResultado.setText( jsonArray.toString());
+
+                recyclerView = findViewById(R.id.recyclerView);
+
+                //Configurar adapter
+
+                //Configurar Recyclerview
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+                recyclerView.setLayoutManager(layoutManager);
+                recyclerView.setHasFixedSize(true);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
